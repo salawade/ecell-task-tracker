@@ -4,37 +4,31 @@ const multer = require("multer");
 const bodyParser = require("body-parser");
 const path = require("path");
 const fs = require("fs");
-require("dotenv").config(); // 🔥 For environment variables
+require("dotenv").config();
 
 const app = express();
 
 // 🔷 Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-// 🔥 FIXED STATIC PATH
 app.use(express.static("public"));
 app.use("/uploads", express.static("uploads"));
 
-// 🔷 Simple session (for admin)
+// 🔷 Simple session
 let isAdminLoggedIn = false;
 
-// 🔷 Database (CLOUD READY)
+// 🔥 DATABASE (FINAL FIX USING DATABASE_URL)
 const db = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT,
+    uri: process.env.DATABASE_URL,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
-
     ssl: {
         rejectUnauthorized: false
     }
 });
-// Connect DB
+
+// 🔷 Test DB connection
 db.getConnection((err, connection) => {
     if (err) {
         console.log("Database connection failed:", err);
@@ -43,6 +37,7 @@ db.getConnection((err, connection) => {
         connection.release();
     }
 });
+
 // 🔷 File Upload Setup
 const storage = multer.diskStorage({
     destination: "./uploads",
@@ -114,7 +109,10 @@ app.post("/upload", upload.single("file"), (req, res) => {
 // 🔷 Get Tasks
 app.get("/tasks", (req, res) => {
     db.query("SELECT * FROM tasks ORDER BY id DESC", (err, result) => {
-        if (err) return res.send("Database Error");
+        if (err) {
+            console.log(err);
+            return res.send("Database Error");
+        }
         res.json(result);
     });
 });
@@ -144,7 +142,7 @@ app.get("/delete/:id", (req, res) => {
     });
 });
 
-// 🔷 START SERVER (🔥 IMPORTANT FIX)
+// 🔷 START SERVER
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
