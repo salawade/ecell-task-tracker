@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+
+<nav>
+    <h2>Dashboard</h2>
+    <div>
+        <a href="/view">View Tasks</a>
+        <a href="/">Home</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="center">Upload Task</h2>
+
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+
+        <input type="text" name="title" placeholder="Task Title" required>
+
+        <textarea name="description" placeholder="Task Description"></textarea>
+
+        <input type="date" name="date">
+
+        <input type="file" name="file">
+
+        <button type="submit">Upload Task</button>
+
+    </form>
+</div>
+
+</body>
+</html>
