@@ -31,14 +31,14 @@ const db = mysql.createPool({
     queueLimit: 0
 });
 // Connect DB
-db.connect((err) => {
+db.getConnection((err, connection) => {
     if (err) {
         console.log("Database connection failed:", err);
     } else {
         console.log("Connected to database");
+        connection.release();
     }
 });
-
 // 🔷 File Upload Setup
 const storage = multer.diskStorage({
     destination: "./uploads",
