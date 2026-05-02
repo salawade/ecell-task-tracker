@@ -117,6 +117,11 @@ app.get("/tasks", (req, res) => {
     });
 });
 
+// 🔷 Check Admin Status (NEW)
+app.get("/check-admin", (req, res) => {
+    res.json({ isAdmin: isAdminLoggedIn });
+});
+
 // 🔷 View Page
 app.get("/view", (req, res) => {
     res.sendFile(path.join(__dirname, "views", "view.html"));

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
@@ -14,7 +14,6 @@
 </nav>
 
 <div class="container">
-
     <h2 class="center">All Tasks</h2>
 
     <table>
@@ -29,10 +28,46 @@
         </thead>
         <tbody id="taskTable"></tbody>
     </table>
-
 </div>
 
-<script src="/script.js"></script>
+<script>
+let isAdmin = false;
+
+// 🔥 Step 1: Check admin status
+fetch("/check-admin")
+    .then(res => res.json())
+    .then(data => {
+        isAdmin = data.isAdmin;
+        loadTasks();
+    });
+
+// 🔥 Step 2: Load tasks
+function loadTasks() {
+    fetch("/tasks")
+        .then(res => res.json())
+        .then(data => {
+            let html = "";
+
+            data.forEach(task => {
+                html += `
+                    <tr>
+                        <td>${task.title}</td>
+                        <td>${task.description}</td>
+                        <td>${task.date}</td>
+                        <td>
+                            ${task.file_path ? `<a href="/uploads/${task.file_path}" target="_blank">View</a>` : "No File"}
+                        </td>
+                        <td>
+                            ${isAdmin ? `<a href="/delete/${task.id}" style="color:red;">Delete</a>` : ""}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("taskTable").innerHTML = html;
+        });
+}
+</script>
 
 </body>
 </html>
